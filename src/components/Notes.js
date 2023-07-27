@@ -2,13 +2,20 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import noteContext from '../context/notes/noteContext';
 import NoteItem from './NoteItem';
 import AddNote from './AddNote';
+import { useNavigate } from "react-router-dom";
 
 const Notes = () => {
 
   const context = useContext(noteContext);
+  let history = useNavigate();
   const { notes, getNotes, editNote} = context;
   useEffect(() => {
-    getNotes()
+    if(localStorage.getItem('token')){
+      getNotes();
+    }
+    else{
+      history("/login");
+    }
 
     //eslint-disable-next-line
   }, [])
@@ -73,6 +80,9 @@ const onChange = (e)=>{
       <div>
         <div className="row my-3">
           <h2>Your Note</h2>
+          <div className="container mx-2">
+            {notes.length === 0 && 'No notes to display'}
+          </div>
           {notes.map((note) => {
             return <NoteItem key={note._id} updateNote={updateNote} note={note} />
           })}
